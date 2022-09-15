@@ -1,0 +1,21 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adf-gopal"
+		},
+		"AzureBlobStorage_connectionString": {
+			"value": ""
+		},
+		"SqlServer_connectionString": {
+			"value": ""
+		},
+		"ls_gen2_src_accountKey": {
+			"value": ""
+		},
+		"ls_gen2_src_properties_typeProperties_url": {
+			"value": "https://adlsgen2aswitha.dfs.core.windows.net/"
+		}
+	}
+}
