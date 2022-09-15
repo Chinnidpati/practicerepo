@@ -1,0 +1,9 @@
+{
+	"name": "adf-gopal",
+	"location": "southindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "906b0941-c8be-4bb6-84b2-feed6e7e7044",
+		"tenantId": "0aeceeb3-54bc-44f7-8235-c4859075b3bd"
+	}
+}

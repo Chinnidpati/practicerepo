@@ -1,0 +1,65 @@
+{
+	"name": "Alter_row_transformation",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "blob_testemp",
+						"type": "DatasetReference"
+					},
+					"name": "testemp"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "SqlServer",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "alterRow1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          id as integer,",
+				"          name as string,",
+				"          sal as integer,",
+				"          deptname as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> testemp",
+				"testemp alterRow(deleteIf(deptname=='IT')) ~> alterRow1",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          id as integer,",
+				"          name as string,",
+				"          sal as integer,",
+				"          deptname as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     truncate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          id,",
+				"          name,",
+				"          sal,",
+				"          deptname",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}

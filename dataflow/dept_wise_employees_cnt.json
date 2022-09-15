@@ -1,0 +1,85 @@
+{
+	"name": "dept_wise_employees_cnt",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "blob_employee",
+						"type": "DatasetReference"
+					},
+					"name": "employees"
+				},
+				{
+					"dataset": {
+						"referenceName": "blob_dept",
+						"type": "DatasetReference"
+					},
+					"name": "dept"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "count_of_employees",
+						"type": "DatasetReference"
+					},
+					"name": "countofemployees"
+				}
+			],
+			"transformations": [
+				{
+					"name": "countemployees"
+				},
+				{
+					"name": "join1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EMPLOYEE_ID as string,",
+				"          FIRST_NAME as string,",
+				"          LAST_NAME as string,",
+				"          EMAIL as string,",
+				"          PHONE_NUMBER as string,",
+				"          HIRE_DATE as string,",
+				"          JOB_ID as string,",
+				"          SALARY as string,",
+				"          COMMISSION_PCT as string,",
+				"          MANAGER_ID as string,",
+				"          DEPARTMENT_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> employees",
+				"source(output(",
+				"          DEPARTMENT_ID as string,",
+				"          DEPARTMENT_NAME as string,",
+				"          MANAGER_ID as string,",
+				"          LOCATION_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> dept",
+				"employees aggregate(groupBy(DEPARTMENT_ID),",
+				"     total_employees_cnt = count(EMPLOYEE_ID)) ~> countemployees",
+				"countemployees, dept join(countemployees@DEPARTMENT_ID == dept@DEPARTMENT_ID,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['dept_wise_employees_cnt.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          total_employees_cnt,",
+				"          DEPARTMENT_NAME",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> countofemployees"
+			]
+		}
+	}
+}
